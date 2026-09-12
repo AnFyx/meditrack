@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<meta charset="UTF-8" />
+	<title>New Patient</title>
+</h:head>
+
+<h:body>
+<f:view>
+	<f:metadata>
+		<f:viewParam name="email" value="#{PatientBean.selectedEmail}" />
+		<f:event type="preRenderView" listener="#{PatientBean.init}" />
+	</f:metadata>
+
+	<h:form>
+		<p:messages id="messages" showDetail="true" closable="true" autoUpdate="true"/>
+
+		<div class="card">
+		<p:tabMenu activeIndex="#{param.i}">
+			<p:menuitem value="Assigned Patients" outcome="patients.xhtml">
+				<f:param name="i" value="0"/>
+			</p:menuitem>
+			<p:menuitem value="Unassigned Patients" outcome="unassigned_patients.xhtml">
+				<f:param name="i" value="1"/>
+			</p:menuitem>
+			<p:menuitem value="Doctors" outcome="doctors.xhtml">
+				<f:param name="i" value="2"/>
+			</p:menuitem>
+		</p:tabMenu>
+	</div>
+
+
+
+	<br/>
+<!--Name-->
+	<span class="ui-float-label">
+       <p:inputText id="name" value="#{PatientBean.selectedPatient.name}"/>
+       <p:outputLabel for="@previous" value="Name"/>
+   </span>
+
+	<br/>
+<!--Surname-->
+	<span class="ui-float-label">
+       <p:inputText id="surname" value="#{PatientBean.selectedPatient.surname}"/>
+       <p:outputLabel for="@previous" value="Surname"/>
+	</span>
+
+	<br/>
+<!--Birth Date-->
+	<span class="ui-float-label">
+    <p:datePicker id="birthDate"
+				  value="#{PatientBean.selectedPatient.birthDate}"
+				  monthNavigator="true"
+				  yearNavigator="true"
+				  required="true"
+				  requiredMessage="Birth date is required."
+				  converterMessage="Invalid date format. Please use YYYY-MM-DD.">
+    </p:datePicker>
+
+    <p:outputLabel for="@previous" value="Birth date"/>
+    <p:message for="birthDate"/>
+	</span>
+
+	<br/>
+<!--Mail-->
+	<span class="ui-float-label">
+    <p:inputText id="email" value="#{PatientBean.selectedPatient.email}" required="true" validatorMessage="Email must contain '@' and a valid domain (e.g., example@domain.com)">
+        <f:validateRegex pattern="^.+@.+\..+$"/>
+	</p:inputText>
+    <p:outputLabel for="@previous" value="Email"/>
+    <p:message for="email"/>
+	</span>
+
+	<br/>
+	<!--Doctor-->
+	<span class="ui-float-label">
+    <p:selectOneMenu id="Doctor" value="#{PatientBean.selectedPatient.doctor}" converter="doctorConverter">
+        <f:selectItem itemValue="#{null}" noSelectionOption="true" />
+        <f:selectItems value="#{DoctorBean.allDoctors}" var="d" itemLabel="#{d.name}" itemValue="#{d}" />
+    </p:selectOneMenu>
+    <p:outputLabel for="@previous" value="Doctor"/>
+</span>
+
+	<br/>
+<!--Details-->
+	<span class="ui-float-label">
+	<p:inputTextarea id="details" value="#{PatientBean.selectedPatient.details}" rows="5" cols="30" counter="display" maxlength="200"
+					 counterTemplate="{0} characters remaining." autoResize="false"/>
+		<p:outputLabel for="@previous" value="Details"/>
+	<h:outputText id="display" class="block" />
+	</span>
+
+	<br/><br/>
+	<p:messages id="msgs" showDetail="true" closable="true"/>
+	<p:commandButton value="Save" update="@form" action="#{PatientBean.savePatient}" icon="pi pi-check"/>
+	
+</h:form>
+</f:view>
+</h:body>
+
+</html>

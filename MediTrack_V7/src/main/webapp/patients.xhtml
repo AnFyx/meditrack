@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:f="http://xmlns.jcp.org/jsf/core"
+	  xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<meta charset="UTF-8" />
+	<title>Patients</title>
+</h:head>
+
+<h:body>
+<f:view>
+<h:form>
+	<p:messages id="msgs" autoUpdate="true" closable="true" showDetail="true" />
+	<div class="card">
+		<p:tabMenu activeIndex="#{param.i}">
+			<p:menuitem value="Assigned Patients" outcome="patients.xhtml">
+				<f:param name="i" value="0"/>
+			</p:menuitem>
+			<p:menuitem value="Unassigned Patients" outcome="unassigned_patients.xhtml">
+				<f:param name="i" value="1"/>
+			</p:menuitem>
+			<p:menuitem value="Doctors" outcome="doctors.xhtml">
+				<f:param name="i" value="2"/>
+			</p:menuitem>
+		</p:tabMenu>
+	</div>
+
+	<h1 class="ui-widget-header">Assigned Patients</h1>
+	<p:dataTable value="#{PatientBean.Assigned()}" var="person" paginator="true" rows="5" paginatorPosition="bottom">
+		<p:column>
+			<h:link value="#{person.email}" outcome="details">
+				<f:param name="email" value="#{person.email}" />
+			</h:link>
+		</p:column>
+		<p:column>#{person.surname}</p:column>
+		<p:column>#{person.name}</p:column>
+
+		<p:column>
+			<p:linkButton value="Edit" outcome="patient_edit" style="margin-right:20px;">
+				<f:param name="email" value="#{person.email}" />
+				<f:param name="i" value="0"/>
+			</p:linkButton>
+			<p:confirmDialog widgetVar="confirmDialog" header="Are you sure ?"
+							 showEffect="fade" hideEffect="fade" closable="true"
+							 style="text-align: center;">
+				<p:commandButton value="Yes" action="#{PatientBean.deletePatient(PatientBean.selectedPatient)}"
+								 update="@form" oncomplete="PF('confirmDialog').hide()"
+								 styleClass="ui-button-success" icon="pi pi-check" />
+
+				<p:commandButton value="No" onclick="PF('confirmDialog').hide()" type="button"
+								 styleClass="ui-button-danger" icon="pi pi-times" style="margin-left: 10px;" />
+			</p:confirmDialog>
+
+
+			<p:commandButton value="Delete" style="margin-right:20px;"
+							 onclick="PF('confirmDialog').show();">
+				<f:setPropertyActionListener target="#{PatientBean.selectedPatient}" value="#{person}" />
+			</p:commandButton>
+		</p:column>
+	</p:dataTable>
+	<br/>
+	<p:button value="New Patient" outcome="/faces/patient_edit.xhtml">
+		<f:param name="email" value="NULL"/>
+		<f:param name="i" value="0"/>
+	</p:button>
+
+
+</h:form>
+</f:view>
+</h:body>
+
+</html>

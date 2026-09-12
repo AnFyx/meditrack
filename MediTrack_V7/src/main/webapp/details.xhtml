@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>Details</title>
+</h:head>
+
+<h:body>
+	<f:view>
+		<f:metadata>
+			<f:viewParam name="email" value="#{DetailsBean.email}" />
+			<f:event type="preRenderView" listener="#{DetailsBean.init}" />
+		</f:metadata>
+
+		<h:form>
+			<h1>Details</h1>
+
+			<!-- PATIENT -->
+			<h:panelGroup rendered="#{DetailsBean.selectedPatient != null}">
+				<h2>Patient Information</h2>
+				<p><strong>Name:</strong> #{DetailsBean.selectedPatient.name}</p>
+				<p><strong>Surname:</strong> #{DetailsBean.selectedPatient.surname}</p>
+				<p><strong>Email:</strong> #{DetailsBean.selectedPatient.email}</p>
+				<p><strong>Birth Date:</strong> #{DetailsBean.selectedPatient.birthDate}</p>
+				<p><strong>Details:</strong> #{DetailsBean.selectedPatient.details}</p>
+				<p><strong>Doctor:</strong> #{DetailsBean.selectedPatient.doctor.name}</p>
+			</h:panelGroup>
+
+			<!-- DOCTOR -->
+			<h:panelGroup rendered="#{DetailsBean.selectedDoctor != null}">
+				<h2>Doctor Information</h2>
+				<p><strong>Name:</strong> #{DetailsBean.selectedDoctor.name}</p>
+				<p><strong>Surname:</strong> #{DetailsBean.selectedDoctor.surname}</p>
+				<p><strong>Email:</strong> #{DetailsBean.selectedDoctor.email}</p>
+				<p><strong>Max patients:</strong> #{DetailsBean.selectedDoctor.maxPatients}</p>
+			</h:panelGroup>
+
+			<p:commandButton value="Back" action="patients?faces-redirect=true" icon="pi pi-arrow-left" />
+		</h:form>
+	</f:view>
+</h:body>
+</html>
