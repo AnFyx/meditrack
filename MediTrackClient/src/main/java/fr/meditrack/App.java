@@ -2,8 +2,6 @@ package fr.meditrack;
 
 import com.google.gson.Gson;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import java.io.OutputStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -12,12 +10,8 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Hashtable;
 import java.util.Scanner;
 
-import jakarta.jms.ConnectionFactory;
-import jakarta.jms.JMSContext;
-import jakarta.jms.Queue;
 
 
 public class App {
