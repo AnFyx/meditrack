@@ -1,0 +1,26 @@
+# Sortie de build Maven
+target/
+*.war
+*.ear
+*.jar
+*.class
+
+# Configuration locale et secrets : jamais versionnés
+*.env
+.env*
+standalone*.xml
+*-ds.xml
+
+# IDE et OS
+.idea/
+.vscode/
+.settings/
+.metadata/
+.classpath
+.project
+*.iml
+*.ipr
+*.iws
+nbproject/
+Thumbs.db
+.DS_Store
