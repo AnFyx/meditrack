@@ -1,50 +1,54 @@
 package aiv.jms;
 
+import jakarta.annotation.Resource;
 import jakarta.enterprise.context.Dependent;
-import jakarta.faces.application.FacesMessage;
-import jakarta.faces.context.FacesContext;
-import jakarta.mail.*;
-import jakarta.mail.internet.*;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 
 import java.io.Serializable;
-import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+/**
+ * Envoi des notifications par courriel.
+ *
+ * <p>La session de messagerie vient du serveur d'applications, via la ressource
+ * JNDI {@code java:/mail/MyMail} : hôte, port et identifiants SMTP sont donc
+ * configurés dans WildFly et n'apparaissent jamais dans le code ni dans le
+ * dépôt. Voir la section « Configuration » du README.
+ */
 @Dependent
 public class MailSender implements Serializable {
 
-    public static void send(String to, String subject, String body) {
-        final String username = "tomin83210@gmail.com";
-        final String password = "smyk qdif siky asai";
+    private static final Logger LOGGER = Logger.getLogger(MailSender.class.getName());
 
-        Properties props = new Properties();
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", "smtp.gmail.com");
-        props.put("mail.smtp.port", "587");
+    @Resource(lookup = "java:/mail/MyMail")
+    private Session mailSession;
 
-        Session session = Session.getInstance(props, new Authenticator() {
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(username, password);
-            }
-        });
-
+    /**
+     * Envoie un message. Un échec est journalisé sans interrompre le traitement
+     * en cours : la notification est accessoire, l'affectation reste valide.
+     *
+     * <p>L'adresse du destinataire n'est pas journalisée : c'est une donnée
+     * personnelle, et les journaux du serveur ne sont pas un endroit pour en
+     * conserver.
+     */
+    public void send(String to, String subject, String body) {
         try {
-            Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(username));
+            Message message = new MimeMessage(mailSession);
+            message.setFrom();
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
             message.setSubject(subject);
             message.setText(body);
 
             Transport.send(message);
-
-            System.out.println("✅ Email sent to " + to);
-            FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Email sent to " + to));
-
+            LOGGER.fine("Notification sent");
         } catch (MessagingException e) {
-            System.out.println("❌ Failed to send email to " + to);
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, "Failed to send a notification", e);
         }
     }
 }
